@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 app.get("/", (_req, res) => {
   res.json({
     success: true,
-    message: "Srikanth Bethi API is running 🚀",
+    message: "Srikanth BethiA API is running 🚀",
   });
 });
 
