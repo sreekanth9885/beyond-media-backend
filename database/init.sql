@@ -24,5 +24,5 @@ VALUES(
 
 'admin@beyondmedia.com',
 
-'$10$hj3ate.PZethVV6pnAxNDODJgxVF..TnI8G45JkhCMP5/Hv.NqRjC'
+'$2b$10$fx1gIOVR8FuCIJQptevhUOSYXsjVavB8YMp4g3mhFaPDE5bMoUcRO'
 );
