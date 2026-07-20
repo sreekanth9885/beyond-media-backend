@@ -22,7 +22,7 @@ app.use(express.json());
 app.get("/", (_req, res) => {
   res.json({
     success: true,
-    message: "Srikanth Bethi API is running 🚀",
+    message: "Srikanth Bethi API running 🚀",
   });
 });
 
