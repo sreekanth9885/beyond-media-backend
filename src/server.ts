@@ -1,13 +1,22 @@
-import dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
-console.log('Host:', process.env.DB_HOST);
-console.log('User:', process.env.DB_USER);
-console.log('Password:', process.env.DB_PASSWORD);
-console.log('Name:', process.env.DB_NAME);
-import app from "./app";
+import express from "express";
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.get("/", (_req, res) => {
+  res.json({
+    success: true,
+    message: "Beyond Media API is running 🚀",
+  });
+});
+
+app.get("/health", (_req, res) => {
+  res.json({
+    status: "UP",
+    timestamp: new Date(),
+  });
+});
+
+app.listen(Number(PORT), "0.0.0.0", () => {
+  console.log(`Server running on ${PORT}`);
 });
