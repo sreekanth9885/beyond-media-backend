@@ -12,8 +12,8 @@ git pull origin main
 echo "Building Docker image..."
 docker compose build api
 
-echo "Restarting API container..."
-docker compose up -d --no-deps api
+echo "Restarting API..."
+docker compose up -d api
 
 echo "Cleaning unused images..."
 docker image prune -f
