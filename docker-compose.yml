@@ -12,7 +12,8 @@ services:
 
     depends_on:
       - mysql
-
+    volumes:
+      - ./uploads:/app/uploads
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`api.dinnusmart.com`)"
