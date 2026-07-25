@@ -1,17 +1,21 @@
 import { Router } from "express";
 import upload from "../../middleware/upload";
 
+import {
+  createNews,
+  getNews,
+  getSingleNews,
+  deleteNews,
+} from "./news.controller";
+
 const router = Router();
 
-router.post(
-  "/upload",
-  upload.single("featuredImage"),
-  (req, res) => {
-    return res.json({
-      success: true,
-      file: req.file,
-    });
-  }
-);
+router.post("/", upload.single("featuredImage"), createNews);
+
+router.get("/", getNews);
+
+router.get("/:id", getSingleNews);
+
+router.delete("/:id", deleteNews);
 
 export default router;
