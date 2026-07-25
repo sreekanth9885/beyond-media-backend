@@ -23,7 +23,7 @@ app.use(express.json());
 app.get("/", (_req, res) => {
   res.json({
     success: true,
-    message: "Beyond Media Sree API is running 🚀",
+    message: "Beyond Media Sreekanth API is running 🚀",
   });
 });
 
