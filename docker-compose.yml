@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
 
     env_file:
-      - .env
+      - .env.production
 
     depends_on:
       - mysql
@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
 
     env_file:
-      - .env
+      - .env.production
 
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
