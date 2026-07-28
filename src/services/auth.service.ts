@@ -1,5 +1,8 @@
 import db from "../config/db";
-
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../helpers/jwtHelper";
 export const loginUser = async (data: any) => {
   const { email, password } = data;
 
@@ -31,12 +34,28 @@ export const loginUser = async (data: any) => {
     };
   }
 
+  const user = rows[0];
+
+  const access_token = generateAccessToken({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  });
+
+  const refresh_token = generateRefreshToken({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  });
+
   return {
     status: 200,
     body: {
       success: true,
       message: "Login successful",
-      user: rows[0],
+      user,
+      access_token,
+      refresh_token,
     },
   };
 };
