@@ -2,13 +2,18 @@ import express from "express";
 import corsMiddleware from "./middleware/cors";
 import routes from "./routes";
 import path from "path";
-import newsRoutes from "./module/news/news.routes";
+
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
 
 const app = express();
 
 app.use(corsMiddleware);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(express.json());
+
+// Swagger Documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(routes);
 
