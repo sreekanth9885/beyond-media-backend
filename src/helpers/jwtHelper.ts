@@ -7,6 +7,8 @@ export interface JwtPayload {
   id: number;
   name: string;
   email: string;
+  roles: string[];
+  permissions: string[];
 }
 
 const accessOptions: SignOptions = {

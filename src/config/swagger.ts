@@ -2,9 +2,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 
 
 const options: swaggerJsdoc.Options = {
-
   definition: {
-
     openapi: "3.0.0",
 
     info: {
@@ -12,7 +10,6 @@ const options: swaggerJsdoc.Options = {
       version: "1.0.0",
       description: "API documentation for Beyond Media CMS",
     },
-
 
     servers: [
       {
@@ -25,32 +22,22 @@ const options: swaggerJsdoc.Options = {
       },
     ],
 
-
     components: {
-
       securitySchemes: {
-
         bearerAuth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
         },
-
       },
-
     },
-
   },
-
 
   apis: [
     "./src/routes/*.routes.ts",
+    "./src/module/**/*.routes.ts",
     "./src/controllers/*.ts",
-  "./src/module/**/*.routes.ts",
-  
-  
-],
-
+  ],
 };
 
 

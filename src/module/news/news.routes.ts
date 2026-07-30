@@ -7,10 +7,9 @@ import {
   getSingleNews,
   deleteNews,
 } from "./news.controller";
-
+import { authorize } from "../../middleware/authorize";
 
 const router = Router();
-
 
 /**
  * @swagger
@@ -18,7 +17,6 @@ const router = Router();
  *   name: News
  *   description: News management APIs
  */
-
 
 /**
  * @swagger
@@ -62,10 +60,9 @@ const router = Router();
 router.post(
   "/",
   upload.single("featuredImage"),
-  createNews
+  authorize("news.create"),
+  createNews,
 );
-
-
 
 /**
  * @swagger
@@ -80,8 +77,6 @@ router.post(
  *         description: News fetched successfully
  */
 router.get("/", getNews);
-
-
 
 /**
  * @swagger
@@ -104,8 +99,6 @@ router.get("/", getNews);
  */
 router.get("/:id", getSingleNews);
 
-
-
 /**
  * @swagger
  * /news/{id}:
@@ -127,7 +120,7 @@ router.get("/:id", getSingleNews);
  *       200:
  *         description: News deleted successfully
  */
-router.delete("/:id", deleteNews);
+router.delete("/:id", authorize("news.delete"), deleteNews);
 
 
 export default router;
