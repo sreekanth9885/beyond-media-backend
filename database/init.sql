@@ -200,4 +200,22 @@ INSERT INTO permissions (name, module, description) VALUES
 ('permissions.view', 'permissions', 'View Permissions'),
 ('permissions.create', 'permissions', 'Create Permissions'),
 ('permissions.update', 'permissions', 'Update Permissions'),
-('permissions.delete', 'permissions', 'Delete Permissions');
+('permissions.delete', 'permissions', 'Delete Permissions'); 
+
+ALTER TABLE news
+ADD COLUMN category_id BIGINT UNSIGNED NOT NULL AFTER slug,
+ADD COLUMN sub_category_id BIGINT UNSIGNED NOT NULL AFTER category_id;
+
+ALTER TABLE news
+ADD CONSTRAINT fk_news_category
+FOREIGN KEY (category_id)
+REFERENCES categories(id)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+ALTER TABLE news
+ADD CONSTRAINT fk_news_subcategory
+FOREIGN KEY (sub_category_id)
+REFERENCES subcategories(id)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;

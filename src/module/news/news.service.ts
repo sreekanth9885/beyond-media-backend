@@ -14,11 +14,11 @@ export const create = async (body: any, file?: Express.Multer.File) => {
   const id = await repository.createNews({
     title: body.title,
     slug,
+    category_id: body.category_id,
+    sub_category_id: body.sub_category_id,
     short_description: body.short_description,
     content: body.content,
-    featured_image: file
-      ? `/uploads/news/${file.filename}`
-      : null,
+    featured_image: file ? `/uploads/news/${file.filename}` : null,
     status: body.status || "draft",
   });
 
