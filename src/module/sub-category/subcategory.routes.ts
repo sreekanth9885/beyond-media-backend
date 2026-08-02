@@ -17,7 +17,7 @@ const router = Router();
 router.post(
   "/",
   authenticate,
-  authorize("subcategory.create"),
+  authorize("subcategories.create"),
   createSubcategory,
 );
 
@@ -28,21 +28,21 @@ router.get("/:id", getSubcategoryById);
 router.put(
   "/:id",
   authenticate,
-  authorize("subcategory.update"),
+  authorize("subcategories.update"),
   updateSubcategory,
 );
 
 router.patch(
   "/:id/status",
   authenticate,
-  authorize("subcategory.update"),
+  authorize("subcategories.update"),
   updateSubcategoryStatus,
 );
 
 router.delete(
   "/:id",
   authenticate,
-  authorize("subcategory.delete"),
+  authorize("subcategories.delete"),
   deleteSubcategory,
 );
 
