@@ -3,45 +3,6 @@ import authController from "./auth.controller";
 
 const router = Router();
 
-/**
- * @swagger
- * tags:
- *   name: Authentication
- *   description: Authentication APIs
- */
-
-/**
- * @swagger
- * /auth/login:
- *   post:
- *     summary: Login
- *     tags:
- *       - Authentication
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 example: admin@beyondmedia.com
- *               password:
- *                 type: string
- *                 example: password123
- *     responses:
- *       200:
- *         description: Login Successful
- *       401:
- *         description: Invalid Credentials
- */
-router.post(
-    "/login",
-    authController.login
-);
-
+router.post("/login", authController.login);
+router.post("/refresh", authController.refresh);
 export default router;

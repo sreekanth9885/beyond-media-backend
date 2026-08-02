@@ -15,6 +15,18 @@ class AuthController {
       });
     }
   }
+  async refresh(req: Request, res: Response) {
+    try {
+      const result = await authService.refresh(req.body.refresh_token);
+
+      return res.json(result);
+    } catch (error: any) {
+      return res.status(401).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }
 
 export default new AuthController();

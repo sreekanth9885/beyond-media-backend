@@ -4,7 +4,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../helpers/jwtHelper";
-
+import { verifyRefreshToken } from "../../helpers/jwtHelper";
 class AuthService {
   async login(data: any) {
     const { email, password } = data;
@@ -69,6 +69,27 @@ class AuthService {
       access_token,
 
       refresh_token,
+    };
+  }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw new Error("Refresh token is required.");
+    }
+
+    const payload: any = verifyRefreshToken(refreshToken);
+
+    const newAccessToken = generateAccessToken({
+      id: payload.id,
+      name: payload.name,
+      email: payload.email,
+      roles: payload.roles,
+      permissions: payload.permissions,
+    });
+
+    return {
+      success: true,
+      access_token: newAccessToken,
     };
   }
 }
