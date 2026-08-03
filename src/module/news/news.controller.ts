@@ -50,7 +50,22 @@ export const getSingleNews = async (
     data: news,
   });
 };
+export const updateNews = async (req: Request, res: Response) => {
+  const news = await service.update(Number(req.params.id), req.body, req.file);
 
+  if (!news) {
+    return res.status(404).json({
+      success: false,
+      message: "News not found",
+    });
+  }
+
+  res.json({
+    success: true,
+    message: "News updated successfully.",
+    data: news,
+  });
+};
 export const deleteNews = async (
   req: Request,
   res: Response

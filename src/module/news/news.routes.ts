@@ -5,18 +5,25 @@ import {
   createNews,
   getNews,
   getSingleNews,
+  updateNews,
   deleteNews,
 } from "./news.controller";
-import { authorize } from "../../middleware/authorize";
 
 const router = Router();
 
+// Create
 router.post("/", upload.single("featuredImage"), createNews);
 
+// Get All
 router.get("/", getNews);
 
+// Get Single
 router.get("/:id", getSingleNews);
 
+// Update
+router.put("/:id", upload.single("featuredImage"), updateNews);
+
+// Delete
 router.delete("/:id", deleteNews);
 
 export default router;
