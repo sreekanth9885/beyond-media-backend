@@ -10,10 +10,12 @@ export const createNews = async (data: any) => {
     sub_category_id,
     short_description,
     content,
+    tags,
+    youtube_url,
     featured_image,
     status
   )
-  VALUES (?,?,?,?,?,?,?,?)`,
+  VALUES (?,?,?,?,?,?,?,?,?,?)`,
     [
       data.title,
       data.slug,
@@ -21,6 +23,8 @@ export const createNews = async (data: any) => {
       data.sub_category_id,
       data.short_description,
       data.content,
+      data.tags,
+      data.youtube_url,
       data.featured_image,
       data.status,
     ],
@@ -66,6 +70,8 @@ export const updateNews = async (id: number, data: any) => {
       sub_category_id=?,
       short_description=?,
       content=?,
+      tags=?,
+      youtube_url=?,
       featured_image=?,
       status=?
    WHERE id=?`,
@@ -76,6 +82,8 @@ export const updateNews = async (id: number, data: any) => {
       data.sub_category_id,
       data.short_description,
       data.content,
+      data.tags,
+      data.youtube_url,
       data.featured_image,
       data.status,
       id,

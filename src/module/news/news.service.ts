@@ -18,6 +18,8 @@ export const create = async (body: any, file?: Express.Multer.File) => {
     sub_category_id: body.sub_category_id,
     short_description: body.short_description,
     content: body.content,
+    tags: body.tags,
+    youtube_url: body.youtube_url,
     featured_image: file ? `/uploads/news/${file.filename}` : null,
     status: body.status || "draft",
   });
