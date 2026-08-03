@@ -8,6 +8,7 @@ import roleRoutes from "../module/roles/role.routes";
 import permissionRoutes from "../module/permissions/permission.routes";
 import userroleRoutes from "../module/users-roles/userrole.routes";
 import userRoutes from "../module/users/user.routes";
+import advertisementRoutes from "../module/advertisement/advertisement.routes";
 const router = Router();
 
 router.use("/", healthRoutes);
@@ -19,4 +20,5 @@ router.use("/api/roles", roleRoutes);
 router.use("/api/permissions", permissionRoutes);
 router.use("/api/users", userroleRoutes);
 router.use("/api/users", userRoutes);
+router.use("/api/advertisements", advertisementRoutes);
 export default router;
