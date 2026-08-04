@@ -28,7 +28,7 @@ export const createAdvertisement = async (data: any) => {
       data.end_date || null,
       data.sort_order || 0,
       data.status,
-    ]
+    ],
   );
 
   return result.insertId;
@@ -47,7 +47,7 @@ export const getAllAdvertisements = async () => {
     LEFT JOIN subcategories s
       ON a.sub_category_id = s.id
     ORDER BY a.sort_order ASC, a.id DESC
-    `
+    `,
   );
 
   return rows;
@@ -67,15 +67,13 @@ export const getAdvertisementById = async (id: number) => {
       ON a.sub_category_id = s.id
     WHERE a.id=?
     `,
-    [id]
+    [id],
   );
 
   return rows[0];
 };
 
-export const getAdvertisementsByPosition = async (
-  position: string
-) => {
+export const getAdvertisementsByPosition = async (position: string) => {
   const [rows] = await db.execute(
     `
     SELECT
@@ -88,28 +86,17 @@ export const getAdvertisementsByPosition = async (
     LEFT JOIN subcategories s
       ON a.sub_category_id = s.id
     WHERE
-      a.position=?
-      AND a.status='active'
-      AND (
-        a.start_date IS NULL
-        OR a.start_date <= NOW()
-      )
-      AND (
-        a.end_date IS NULL
-        OR a.end_date >= NOW()
-      )
+a.position=?
+AND a.status='active'
     ORDER BY a.sort_order ASC
     `,
-    [position]
+    [position],
   );
 
   return rows;
 };
 
-export const updateAdvertisement = async (
-  id: number,
-  data: any
-) => {
+export const updateAdvertisement = async (id: number, data: any) => {
   await db.execute(
     `
     UPDATE advertisements
@@ -138,18 +125,16 @@ export const updateAdvertisement = async (
       data.sort_order || 0,
       data.status,
       id,
-    ]
+    ],
   );
 };
 
-export const deleteAdvertisement = async (
-  id: number
-) => {
+export const deleteAdvertisement = async (id: number) => {
   await db.execute(
     `
     DELETE FROM advertisements
     WHERE id=?
     `,
-    [id]
+    [id],
   );
 };

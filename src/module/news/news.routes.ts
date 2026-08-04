@@ -7,6 +7,7 @@ import {
   getSingleNews,
   updateNews,
   deleteNews,
+  getNewsByCategory,
 } from "./news.controller";
 
 const router = Router();
@@ -16,7 +17,7 @@ router.post("/", upload.single("featuredImage"), createNews);
 
 // Get All
 router.get("/", getNews);
-
+router.get("/category/:slug", getNewsByCategory);
 // Get Single
 router.get("/:id", getSingleNews);
 

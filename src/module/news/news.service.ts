@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 
 import * as repository from "./news.repository";
+import pool from "../../config/db";
 
 export const create = async (body: any, file?: Express.Multer.File) => {
   const slug = slugify(body.title, {
@@ -93,4 +94,25 @@ export const remove = async (id: number) => {
   }
 
   await repository.deleteNews(id);
+};
+
+export const getNewsByCategory = async (slug: string) => {
+  const [rows] = await pool.query(
+    `
+    SELECT
+        n.*,
+        c.name AS category_name,
+        s.name AS sub_category_name
+    FROM news n
+    INNER JOIN categories c
+        ON n.category_id = c.id
+    LEFT JOIN subcategories s
+        ON n.sub_category_id = s.id
+    WHERE c.slug = ?
+    ORDER BY n.created_at DESC
+    `,
+    [slug],
+  );
+
+  return rows;
 };
