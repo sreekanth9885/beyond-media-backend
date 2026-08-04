@@ -116,3 +116,28 @@ export const getNewsByCategory = async (slug: string) => {
 
   return rows;
 };
+
+export const getNewsBySlug = async (slug: string) => {
+  const [rows]: any = await pool.query(
+    `
+      SELECT
+          n.*,
+          c.name AS category_name,
+          s.name AS sub_category_name
+      FROM news n
+      INNER JOIN categories c
+          ON n.category_id = c.id
+      LEFT JOIN subcategories s
+          ON n.sub_category_id = s.id
+      WHERE n.slug = ?
+      LIMIT 1
+      `,
+    [slug],
+  );
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+  return rows[0];
+};
