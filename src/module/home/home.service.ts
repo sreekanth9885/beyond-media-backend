@@ -1,7 +1,6 @@
 import db from "../../config/db";
 
 export const getHome = async () => {
-
   // Hero Slider
   const [hero] = await db.query(`
       SELECT
@@ -79,18 +78,40 @@ export const getHome = async () => {
   `);
 
   // Homepage Ads
-  const [ads] = await db.query(`
-      SELECT *
-      FROM advertisements
-      WHERE
-          status='active'
-          AND position IN (
-              'homepage_top',
-              'homepage_middle',
-              'homepage_bottom'
-          )
-      ORDER BY sort_order
-  `);
+  // Advertisements
+  const [ads]: any = await db.query(`
+    SELECT *
+    FROM advertisements
+    WHERE
+        status='active'
+        AND (
+            start_date IS NULL OR start_date <= NOW()
+        )
+        AND (
+            end_date IS NULL OR end_date >= NOW()
+        )
+    ORDER BY
+        position,
+        sort_order ASC,
+        id DESC
+`);
+
+  const advertisements = {
+    homepage_top: [],
+    homepage_middle: [],
+    homepage_bottom: [],
+    sidebar_top: [],
+    sidebar_bottom: [],
+    news_top: [],
+    news_middle: [],
+    news_bottom: [],
+  } as Record<string, any[]>;
+
+  for (const ad of ads) {
+    if (advertisements[ad.position]) {
+      advertisements[ad.position].push(ad);
+    }
+  }
 
   // Category Sections
   const [categories]: any = await db.query(`
@@ -107,8 +128,7 @@ export const getHome = async () => {
   const categorySections = [];
 
   for (const category of categories) {
-
-      const [news]: any = await db.query(
+    const [news]: any = await db.query(
       `
       SELECT
           id,
@@ -123,24 +143,24 @@ export const getHome = async () => {
       ORDER BY published_at DESC
       LIMIT 6
       `,
-      [category.id]
-      );
+      [category.id],
+    );
 
-      categorySections.push({
-          category,
-          news
-      });
+    categorySections.push({
+      category,
+      news,
+    });
   }
 
   return {
-      hero,
-      breaking,
-      latest,
-      trending,
-      advertisements: ads,
-      categories: categorySections,
-      sidebar: {
-          latest: sidebarLatest
-      }
+    hero,
+    breaking,
+    latest,
+    trending,
+    advertisements,
+    categories: categorySections,
+    sidebar: {
+      latest: sidebarLatest,
+    },
   };
-};
+};;
