@@ -130,3 +130,29 @@ export const changeNewsStatus = async (req: Request, res: Response) => {
     data: news,
   });
 };
+export const getNewsDetails = async (req: Request, res: Response) => {
+  try {
+    const slugParam = req.params.slug;
+    const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
+    const data = await service.getNewsDetails(slug);
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "News not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load news",
+    });
+  }
+};

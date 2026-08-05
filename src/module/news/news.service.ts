@@ -164,3 +164,162 @@ export const changeStatus = async (
 
   return repository.getNewsById(id);
 };
+export const getNewsDetails = async (slug: string) => {
+  // Main News
+  const [rows]: any = await pool.query(
+    `
+    SELECT
+        n.*,
+        c.name category_name,
+        c.slug category_slug,
+        s.name sub_category_name,
+        s.slug sub_category_slug
+    FROM news n
+    INNER JOIN categories c
+        ON c.id=n.category_id
+    INNER JOIN subcategories s
+        ON s.id=n.sub_category_id
+    WHERE
+        n.slug=?
+        AND n.status='published'
+    LIMIT 1
+    `,
+    [slug],
+  );
+
+  if (!rows.length) {
+    return null;
+  }
+
+  const news = rows[0];
+
+  // Increase Views
+  await pool.query(
+    `
+    UPDATE news
+    SET views=views+1
+    WHERE id=?
+    `,
+    [news.id],
+  );
+
+  news.views += 1;
+
+  // Related News
+  const [related] = await pool.query(
+    `
+    SELECT
+        id,
+        title,
+        slug,
+        featured_image,
+        short_description,
+        published_at
+    FROM news
+    WHERE
+        category_id=?
+        AND id<>?
+        AND status='published'
+    ORDER BY published_at DESC
+    LIMIT 6
+    `,
+    [news.category_id, news.id],
+  );
+
+  // Previous News
+  const [previous]: any = await pool.query(
+    `
+    SELECT
+        id,
+        title,
+        slug
+    FROM news
+    WHERE
+        id<?
+        AND status='published'
+    ORDER BY id DESC
+    LIMIT 1
+    `,
+    [news.id],
+  );
+
+  // Next News
+  const [next]: any = await pool.query(
+    `
+    SELECT
+        id,
+        title,
+        slug
+    FROM news
+    WHERE
+        id>?
+        AND status='published'
+    ORDER BY id ASC
+    LIMIT 1
+    `,
+    [news.id],
+  );
+
+  // Sidebar Latest
+  const [latest] = await pool.query(
+    `
+    SELECT
+        id,
+        title,
+        slug
+    FROM news
+    WHERE status='published'
+    ORDER BY published_at DESC
+    LIMIT 8
+    `,
+  );
+
+  // Sidebar Trending
+  const [trending] = await pool.query(
+    `
+    SELECT
+        id,
+        title,
+        slug,
+        views
+    FROM news
+    WHERE status='published'
+    ORDER BY views DESC
+    LIMIT 8
+    `,
+  );
+
+  // News Ads
+  const [ads] = await pool.query(
+    `
+    SELECT *
+    FROM advertisements
+    WHERE
+        status='active'
+        AND position IN
+        (
+            'news_top',
+            'news_middle',
+            'news_bottom'
+        )
+    ORDER BY sort_order
+    `,
+  );
+
+  return {
+    news,
+
+    previous: previous[0] || null,
+
+    next: next[0] || null,
+
+    related,
+
+    sidebar: {
+      latest,
+      trending,
+    },
+
+    advertisements: ads,
+  };
+};

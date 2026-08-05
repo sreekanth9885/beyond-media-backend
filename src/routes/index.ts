@@ -22,5 +22,5 @@ router.use("/api/permissions", permissionRoutes);
 router.use("/api/users", userroleRoutes);
 router.use("/api/users", userRoutes);
 router.use("/api/advertisements", advertisementRoutes);
-router.use("/home", homeRoutes);
+router.use("/api/home", homeRoutes);
 export default router;

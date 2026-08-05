@@ -10,6 +10,7 @@ import {
   getNewsByCategory,
   getNewsBySlug,
   changeNewsStatus,
+  getNewsDetails,
 } from "./news.controller";
 
 const router = Router();
@@ -17,16 +18,20 @@ const router = Router();
 // Create
 router.post("/", upload.single("featuredImage"), createNews);
 
-// Get All
+// Admin list
 router.get("/", getNews);
+
+// Public APIs
 router.get("/category/:slug", getNewsByCategory);
-router.get("/:slug", getNewsBySlug);
-// Get Single
-router.get("/:id", getSingleNews);
+router.get("/details/:slug", getNewsDetails);
+
+// Admin APIs
+router.get("/id/:id", getSingleNews);
 
 // Update
 router.put("/:id", upload.single("featuredImage"), updateNews);
 router.patch("/:id/status", changeNewsStatus);
+
 // Delete
 router.delete("/:id", deleteNews);
 
