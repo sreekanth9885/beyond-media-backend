@@ -11,11 +11,11 @@ export const createNews = async (req: Request, res: Response) => {
 };
 
 export const getNews = async (req: Request, res: Response) => {
-  const news = await service.getAll();
+  const result = await service.getAll(req.query);
 
   res.json({
     success: true,
-    data: news,
+    ...result,
   });
 };
 
@@ -104,4 +104,29 @@ export const getNewsBySlug = async (req: Request, res: Response) => {
       message: "Failed to fetch news",
     });
   }
+};
+export const changeNewsStatus = async (req: Request, res: Response) => {
+  const { status } = req.body;
+
+  if (!["draft", "published"].includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid status",
+    });
+  }
+
+  const news = await service.changeStatus(Number(req.params.id), status);
+
+  if (!news) {
+    return res.status(404).json({
+      success: false,
+      message: "News not found",
+    });
+  }
+
+  res.json({
+    success: true,
+    message: "Status updated successfully",
+    data: news,
+  });
 };

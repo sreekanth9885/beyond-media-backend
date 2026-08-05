@@ -9,6 +9,7 @@ import {
   deleteNews,
   getNewsByCategory,
   getNewsBySlug,
+  changeNewsStatus,
 } from "./news.controller";
 
 const router = Router();
@@ -25,7 +26,7 @@ router.get("/:id", getSingleNews);
 
 // Update
 router.put("/:id", upload.single("featuredImage"), updateNews);
-
+router.patch("/:id/status", changeNewsStatus);
 // Delete
 router.delete("/:id", deleteNews);
 

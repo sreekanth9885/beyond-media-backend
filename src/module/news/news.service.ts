@@ -22,12 +22,17 @@ export const create = async (body: any, file?: Express.Multer.File) => {
     youtube_url: body.youtube_url,
     featured_image: file ? `/uploads/news/${file.filename}` : null,
     status: body.status || "draft",
+    is_featured: Number(body.is_featured),
+    is_breaking: Number(body.is_breaking),
+    published_at: body.published_at || null,
   });
 
   return repository.getNewsById(id);
 };
 
-export const getAll = () => repository.getAllNews();
+export const getAll = (query: any) => {
+  return repository.getAllNews(query);
+};
 
 export const getOne = (id: number) => repository.getNewsById(id);
 
@@ -73,6 +78,9 @@ export const update = async (
     youtube_url: body.youtube_url || null,
     featured_image: featuredImage,
     status: body.status,
+    is_featured: Number(body.is_featured),
+    is_breaking: Number(body.is_breaking),
+    published_at: body.published_at || null,
   });
 
   return repository.getNewsById(id);
@@ -140,4 +148,19 @@ export const getNewsBySlug = async (slug: string) => {
   }
 
   return rows[0];
+};
+
+export const changeStatus = async (
+  id: number,
+  status: "draft" | "published",
+) => {
+  const news = await repository.getNewsById(id);
+
+  if (!news) {
+    return null;
+  }
+
+  await repository.updateNewsStatus(id, status);
+
+  return repository.getNewsById(id);
 };
