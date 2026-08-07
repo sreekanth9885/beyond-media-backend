@@ -1,4 +1,4 @@
-import slugify from "slugify";
+import { generateUniqueSlug } from "../../helpers/slug";
 import fs from "fs";
 import path from "path";
 
@@ -6,10 +6,7 @@ import * as repository from "./news.repository";
 import pool from "../../config/db";
 
 export const create = async (body: any, file?: Express.Multer.File) => {
-  const slug = slugify(body.title, {
-    lower: true,
-    strict: true,
-  });
+  const slug = await generateUniqueSlug(body.title);
 
   const id = await repository.createNews({
     title: body.title,
@@ -47,10 +44,7 @@ export const update = async (
 
   if (!news) return null;
 
-  const slug = slugify(body.title, {
-    lower: true,
-    strict: true,
-  });
+  const slug = await generateUniqueSlug(body.title);
 
   let featuredImage = news.featured_image;
 
@@ -104,7 +98,7 @@ export const remove = async (id: number) => {
   await repository.deleteNews(id);
 };
 
-export const getNewsByCategory = async (slug: string) => {
+export const getNewsByCategory = async (slug: string, limit = 9) => {
   const [rows] = await pool.query(
     `
     SELECT
@@ -117,9 +111,11 @@ export const getNewsByCategory = async (slug: string) => {
     LEFT JOIN subcategories s
         ON n.sub_category_id = s.id
     WHERE c.slug = ?
+    AND n.status = 'published'
     ORDER BY n.created_at DESC
+    LIMIT ?
     `,
-    [slug],
+    [slug, limit],
   );
 
   return rows;
