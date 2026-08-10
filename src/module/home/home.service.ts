@@ -71,7 +71,7 @@ export const getHome = async () => {
     WHERE
       n.status = 'published'
     ORDER BY n.published_at DESC
-    LIMIT 12
+    LIMIT 8
   `);
 
   // =========================================================
