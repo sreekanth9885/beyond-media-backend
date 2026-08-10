@@ -17,7 +17,7 @@ export const getHome = async () => {
           n.status='published'
           AND n.is_featured=1
       ORDER BY n.published_at DESC
-      LIMIT 5
+      LIMIT 10
   `);
 
   // Breaking
