@@ -134,7 +134,7 @@ export const getHome = async () => {
   `);
 
   // =========================================================
-  // ADVERTISEMENTS
+  // ADVERTISEMENTS – includes all positions
   // =========================================================
   const [ads]: any = await db.query(`
     SELECT *
@@ -155,15 +155,20 @@ export const getHome = async () => {
       id DESC
   `);
 
+  // Initialise all advertisement positions (add new ones)
   const advertisements = {
     homepage_top: [],
     homepage_middle: [],
     homepage_bottom: [],
+    homepage_left: [], // new
+    homepage_right: [], // new
+    homepage_down: [], // new
     sidebar_top: [],
     sidebar_bottom: [],
     news_top: [],
     news_middle: [],
     news_bottom: [],
+    // you can also include popup here if needed, but it's not used on the home page
   } as Record<string, any[]>;
 
   for (const ad of ads) {
@@ -233,7 +238,7 @@ export const getHome = async () => {
     breaking,
     latest,
     trending,
-    advertisements,
+    advertisements, // now includes all positions (including left, right, down)
     categories: categorySections,
     sidebar: {
       latest: sidebarLatest,
