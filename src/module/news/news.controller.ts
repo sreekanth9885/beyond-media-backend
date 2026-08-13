@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import * as service from "./news.service";
 
 export const createNews = async (req: Request, res: Response) => {
-  const news = await service.create(req.body, req.file);
+  const userId = (req as any).user?.id;
+  const news = await service.create(req.body, req.file, userId);
 
   res.status(201).json({
     success: true,
@@ -34,7 +35,13 @@ export const getSingleNews = async (req: Request, res: Response) => {
   });
 };
 export const updateNews = async (req: Request, res: Response) => {
-  const news = await service.update(Number(req.params.id), req.body, req.file);
+  const userId = (req as any).user?.id;
+  const news = await service.update(
+    Number(req.params.id),
+    req.body,
+    req.file,
+    userId,
+  );
 
   if (!news) {
     return res.status(404).json({

@@ -3,22 +3,13 @@ import db from "../../config/db";
 export const createNews = async (data: any) => {
   const [result]: any = await db.execute(
     `INSERT INTO news
-  (
-    title,
-    slug,
-    category_id,
-    sub_category_id,
-    short_description,
-    content,
-    tags,
-    youtube_url,
-    featured_image,
-    status,
-    is_featured,
-is_breaking,
-published_at
-  )
-  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    (
+      title, slug, category_id, sub_category_id,
+      short_description, content, tags, youtube_url,
+      featured_image, status, is_featured, is_breaking,
+      published_at, created_by, updated_by
+    )
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       data.title,
       data.slug,
@@ -33,9 +24,10 @@ published_at
       data.is_featured,
       data.is_breaking,
       data.published_at,
+      data.created_by, // will be the same as updated_by
+      data.updated_by,
     ],
   );
-
   return result.insertId;
 };
 
@@ -89,22 +81,21 @@ export const getAllNews = async (filters: any) => {
 
   const [rows] = await db.query(
     `
-  SELECT
+    SELECT
       n.*,
       c.name AS category_name,
-      s.name AS sub_category_name
-  FROM news n
-  LEFT JOIN categories c
-      ON c.id = n.category_id
-  LEFT JOIN subcategories s
-      ON s.id = n.sub_category_id
-
-  ${where}
-
-  ORDER BY n.created_at DESC
-
-  LIMIT ${offset}, ${limit}
-  `,
+      s.name AS sub_category_name,
+      creator.name AS created_by_name,
+      updater.name AS updated_by_name
+    FROM news n
+    LEFT JOIN categories c ON c.id = n.category_id
+    LEFT JOIN subcategories s ON s.id = n.sub_category_id
+    LEFT JOIN users creator ON creator.id = n.created_by
+    LEFT JOIN users updater ON updater.id = n.updated_by
+    ${where}
+    ORDER BY n.created_at DESC
+    LIMIT ${offset}, ${limit}
+    `,
     params,
   );
 
@@ -121,12 +112,15 @@ export const getAllNews = async (filters: any) => {
 
 export const getNewsById = async (id: number) => {
   const [rows]: any = await db.execute(
-    `SELECT *
-     FROM news
-     WHERE id=?`,
+    `SELECT n.*, 
+      creator.name AS created_by_name,
+      updater.name AS updated_by_name
+     FROM news n
+     LEFT JOIN users creator ON creator.id = n.created_by
+     LEFT JOIN users updater ON updater.id = n.updated_by
+     WHERE n.id = ?`,
     [id],
   );
-
   return rows[0];
 };
 
@@ -144,9 +138,10 @@ export const updateNews = async (id: number, data: any) => {
       featured_image=?,
       status=?,
       is_featured=?,
-is_breaking=?,
-published_at=?
-   WHERE id=?`,
+      is_breaking=?,
+      published_at=?,
+      updated_by=?    -- <-- new field
+    WHERE id=?`,
     [
       data.title,
       data.slug,
@@ -161,6 +156,7 @@ published_at=?
       data.is_featured,
       data.is_breaking,
       data.published_at,
+      data.updated_by, // <-- pass userId
       id,
     ],
   );

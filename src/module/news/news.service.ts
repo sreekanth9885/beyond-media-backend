@@ -5,7 +5,11 @@ import path from "path";
 import * as repository from "./news.repository";
 import pool from "../../config/db";
 
-export const create = async (body: any, file?: Express.Multer.File) => {
+export const create = async (
+  body: any,
+  file?: Express.Multer.File,
+  userId?: number,
+) => {
   const slug = await generateUniqueSlug(body.title);
 
   const id = await repository.createNews({
@@ -22,6 +26,8 @@ export const create = async (body: any, file?: Express.Multer.File) => {
     is_featured: Number(body.is_featured),
     is_breaking: Number(body.is_breaking),
     published_at: body.published_at || null,
+    created_by: userId,
+    updated_by: userId,
   });
 
   return repository.getNewsById(id);
@@ -39,6 +45,7 @@ export const update = async (
   id: number,
   body: any,
   file?: Express.Multer.File,
+  userId?: number,
 ) => {
   const news = await repository.getNewsById(id);
 
@@ -75,6 +82,7 @@ export const update = async (
     is_featured: Number(body.is_featured),
     is_breaking: Number(body.is_breaking),
     published_at: body.published_at || null,
+    updated_by: userId,
   });
 
   return repository.getNewsById(id);
