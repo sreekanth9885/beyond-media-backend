@@ -20,10 +20,13 @@ export const getHome = async () => {
       n.views,
       n.published_at,
       c.name AS category_name,
-      c.slug AS category_slug
+      c.slug AS category_slug,
+      creator.name AS created_by_name,
+      updater.name AS updated_by_name
     FROM news n
-    JOIN categories c
-      ON c.id = n.category_id
+    JOIN categories c ON c.id = n.category_id
+    LEFT JOIN users creator ON creator.id = n.created_by
+    LEFT JOIN users updater ON updater.id = n.updated_by
     WHERE
       n.status = 'published'
       AND n.is_featured = 1
@@ -36,16 +39,20 @@ export const getHome = async () => {
   // =========================================================
   const [breaking] = await db.query(`
     SELECT
-      id,
-      title,
-      slug,
-      youtube_url,
-      published_at
-    FROM news
+      n.id,
+      n.title,
+      n.slug,
+      n.youtube_url,
+      n.published_at,
+      creator.name AS created_by_name,
+      updater.name AS updated_by_name
+    FROM news n
+    LEFT JOIN users creator ON creator.id = n.created_by
+    LEFT JOIN users updater ON updater.id = n.updated_by
     WHERE
-      status = 'published'
-      AND is_breaking = 1
-    ORDER BY published_at DESC
+      n.status = 'published'
+      AND n.is_breaking = 1
+    ORDER BY n.published_at DESC
     LIMIT 10
   `);
 
@@ -64,10 +71,13 @@ export const getHome = async () => {
       n.sub_category_id,
       n.published_at,
       c.name AS category_name,
-      c.slug AS category_slug
+      c.slug AS category_slug,
+      creator.name AS created_by_name,
+      updater.name AS updated_by_name
     FROM news n
-    JOIN categories c
-      ON c.id = n.category_id
+    JOIN categories c ON c.id = n.category_id
+    LEFT JOIN users creator ON creator.id = n.created_by
+    LEFT JOIN users updater ON updater.id = n.updated_by
     WHERE
       n.status = 'published'
     ORDER BY n.published_at DESC
@@ -89,10 +99,13 @@ export const getHome = async () => {
       n.views,
       n.published_at,
       c.name AS category_name,
-      c.slug AS category_slug
+      c.slug AS category_slug,
+      creator.name AS created_by_name,
+      updater.name AS updated_by_name
     FROM news n
-    JOIN categories c
-      ON c.id = n.category_id
+    JOIN categories c ON c.id = n.category_id
+    LEFT JOIN users creator ON creator.id = n.created_by
+    LEFT JOIN users updater ON updater.id = n.updated_by
     WHERE
       n.status = 'published'
     ORDER BY n.views DESC
@@ -104,15 +117,19 @@ export const getHome = async () => {
   // =========================================================
   const [sidebarLatest] = await db.query(`
     SELECT
-      id,
-      title,
-      slug,
-      youtube_url,
-      published_at
-    FROM news
+      n.id,
+      n.title,
+      n.slug,
+      n.youtube_url,
+      n.published_at,
+      creator.name AS created_by_name,
+      updater.name AS updated_by_name
+    FROM news n
+    LEFT JOIN users creator ON creator.id = n.created_by
+    LEFT JOIN users updater ON updater.id = n.updated_by
     WHERE
-      status = 'published'
-    ORDER BY published_at DESC
+      n.status = 'published'
+    ORDER BY n.published_at DESC
     LIMIT 8
   `);
 
@@ -186,10 +203,13 @@ export const getHome = async () => {
         n.sub_category_id,
         n.published_at,
         c.name AS category_name,
-        c.slug AS category_slug
+        c.slug AS category_slug,
+        creator.name AS created_by_name,
+        updater.name AS updated_by_name
       FROM news n
-      JOIN categories c
-        ON c.id = n.category_id
+      JOIN categories c ON c.id = n.category_id
+      LEFT JOIN users creator ON creator.id = n.created_by
+      LEFT JOIN users updater ON updater.id = n.updated_by
       WHERE
         n.category_id = ?
         AND n.status = 'published'
