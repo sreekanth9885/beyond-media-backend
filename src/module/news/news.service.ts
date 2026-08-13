@@ -169,23 +169,72 @@ export const changeStatus = async (
   return repository.getNewsById(id);
 };
 export const getNewsDetails = async (slug: string) => {
-  // Main News
+  // Main News with creator info and roles
   const [rows]: any = await pool.query(
     `
     SELECT
-        n.*,
-        c.name category_name,
-        c.slug category_slug,
-        s.name sub_category_name,
-        s.slug sub_category_slug
+        n.id,
+        n.title,
+        n.slug,
+        n.short_description,
+        n.content,
+        n.featured_image,
+        n.youtube_url,
+        n.category_id,
+        n.sub_category_id,
+        n.is_featured,
+        n.is_breaking,
+        n.views,
+        n.published_at,
+        n.created_at,
+        n.updated_at,
+        n.created_by,
+        n.updated_by,
+        n.status,
+        n.tags,
+        c.name AS category_name,
+        c.slug AS category_slug,
+        s.name AS sub_category_name,
+        s.slug AS sub_category_slug,
+        -- Creator info
+        creator.name AS created_by_name,
+        creator.email AS created_by_email,
+        GROUP_CONCAT(DISTINCT r.name ORDER BY r.name SEPARATOR ', ') AS created_by_roles
     FROM news n
-    INNER JOIN categories c
-        ON c.id=n.category_id
-    INNER JOIN subcategories s
-        ON s.id=n.sub_category_id
+    INNER JOIN categories c ON c.id = n.category_id
+    INNER JOIN subcategories s ON s.id = n.sub_category_id
+    LEFT JOIN users creator ON creator.id = n.created_by
+    LEFT JOIN user_roles ur ON ur.user_id = creator.id
+    LEFT JOIN roles r ON r.id = ur.role_id
     WHERE
-        n.slug=?
-        AND n.status='published'
+        n.slug = ?
+        AND n.status = 'published'
+    GROUP BY
+        n.id,
+        n.title,
+        n.slug,
+        n.short_description,
+        n.content,
+        n.featured_image,
+        n.youtube_url,
+        n.category_id,
+        n.sub_category_id,
+        n.is_featured,
+        n.is_breaking,
+        n.views,
+        n.published_at,
+        n.created_at,
+        n.updated_at,
+        n.created_by,
+        n.updated_by,
+        n.status,
+        n.tags,
+        c.name,
+        c.slug,
+        s.name,
+        s.slug,
+        creator.name,
+        creator.email
     LIMIT 1
     `,
     [slug],
@@ -198,18 +247,10 @@ export const getNewsDetails = async (slug: string) => {
   const news = rows[0];
 
   // Increase Views
-  await pool.query(
-    `
-    UPDATE news
-    SET views=views+1
-    WHERE id=?
-    `,
-    [news.id],
-  );
-
+  await pool.query(`UPDATE news SET views = views + 1 WHERE id = ?`, [news.id]);
   news.views += 1;
 
-  // Related News
+  // Related News (can also add creator info if needed)
   const [related] = await pool.query(
     `
     SELECT
@@ -221,9 +262,9 @@ export const getNewsDetails = async (slug: string) => {
         published_at
     FROM news
     WHERE
-        category_id=?
-        AND id<>?
-        AND status='published'
+        category_id = ?
+        AND id <> ?
+        AND status = 'published'
     ORDER BY published_at DESC
     LIMIT 6
     `,
@@ -233,14 +274,9 @@ export const getNewsDetails = async (slug: string) => {
   // Previous News
   const [previous]: any = await pool.query(
     `
-    SELECT
-        id,
-        title,
-        slug
+    SELECT id, title, slug
     FROM news
-    WHERE
-        id<?
-        AND status='published'
+    WHERE id < ? AND status = 'published'
     ORDER BY id DESC
     LIMIT 1
     `,
@@ -250,29 +286,21 @@ export const getNewsDetails = async (slug: string) => {
   // Next News
   const [next]: any = await pool.query(
     `
-    SELECT
-        id,
-        title,
-        slug
+    SELECT id, title, slug
     FROM news
-    WHERE
-        id>?
-        AND status='published'
+    WHERE id > ? AND status = 'published'
     ORDER BY id ASC
     LIMIT 1
     `,
     [news.id],
   );
 
-  // Sidebar Latest
+  // Sidebar Latest (optionally add creator name)
   const [latest] = await pool.query(
     `
-    SELECT
-        id,
-        title,
-        slug
+    SELECT id, title, slug
     FROM news
-    WHERE status='published'
+    WHERE status = 'published'
     ORDER BY published_at DESC
     LIMIT 8
     `,
@@ -281,13 +309,9 @@ export const getNewsDetails = async (slug: string) => {
   // Sidebar Trending
   const [trending] = await pool.query(
     `
-    SELECT
-        id,
-        title,
-        slug,
-        views
+    SELECT id, title, slug, views
     FROM news
-    WHERE status='published'
+    WHERE status = 'published'
     ORDER BY views DESC
     LIMIT 8
     `,
@@ -299,31 +323,21 @@ export const getNewsDetails = async (slug: string) => {
     SELECT *
     FROM advertisements
     WHERE
-        status='active'
-        AND position IN
-        (
-            'news_top',
-            'news_middle',
-            'news_bottom'
-        )
+        status = 'active'
+        AND position IN ('news_top', 'news_middle', 'news_bottom')
     ORDER BY sort_order
     `,
   );
 
   return {
-    news,
-
+    news, // now includes created_by_name, created_by_email, created_by_roles
     previous: previous[0] || null,
-
     next: next[0] || null,
-
     related,
-
     sidebar: {
       latest,
       trending,
     },
-
     advertisements: ads,
   };
 };
