@@ -68,6 +68,7 @@ export const getHome = async () => {
       n.featured_image,
       n.youtube_url,
       n.category_id,
+      n.views,
       n.sub_category_id,
       n.published_at,
       c.name AS category_name,
