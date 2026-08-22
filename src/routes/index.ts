@@ -24,5 +24,5 @@ router.use("/api/users", userroleRoutes);
 router.use("/api/users", userRoutes);
 router.use("/api/advertisements", advertisementRoutes);
 router.use("/api/home", homeRoutes);
-router.get("/dashboard/stats", getDashboardStats);
+router.get("/api/dashboard/stats", getDashboardStats);
 export default router;
