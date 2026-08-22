@@ -10,6 +10,7 @@ import userroleRoutes from "../module/users-roles/userrole.routes";
 import userRoutes from "../module/users/user.routes";
 import advertisementRoutes from "../module/advertisement/advertisement.routes";
 import homeRoutes from "../module/home/home.routes";
+import { getDashboardStats } from "../module/dashboard/dashboardCounts";
 const router = Router();
 
 router.use("/", healthRoutes);
@@ -23,4 +24,5 @@ router.use("/api/users", userroleRoutes);
 router.use("/api/users", userRoutes);
 router.use("/api/advertisements", advertisementRoutes);
 router.use("/api/home", homeRoutes);
+router.get("/dashboard/stats", getDashboardStats);
 export default router;
