@@ -12,7 +12,7 @@ export interface JwtPayload {
 }
 
 const accessOptions: SignOptions = {
-  expiresIn: "15m",
+  expiresIn: "1m",
 };
 
 const refreshOptions: SignOptions = {

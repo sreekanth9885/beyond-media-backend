@@ -1,5 +1,4 @@
 import { Router } from "express";
-import authRoutes from "./auth.routes";
 import healthRoutes from "./health.routes";
 import newsRoutes from "../module/news/news.routes";
 import categoryRoutes from "../module/category/category.routes";
@@ -11,6 +10,7 @@ import userRoutes from "../module/users/user.routes";
 import advertisementRoutes from "../module/advertisement/advertisement.routes";
 import homeRoutes from "../module/home/home.routes";
 import { getDashboardStats } from "../module/dashboard/dashboardCounts";
+import authRoutes from "../module/auth/auth.routes";
 const router = Router();
 
 router.use("/", healthRoutes);
