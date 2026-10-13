@@ -2,19 +2,19 @@ import db from "../../config/db";
 
 export const createNews = async (data: any) => {
   const [result]: any = await db.execute(
-    `INSERT INTO news
-    (
-      title, slug, category_id, sub_category_id,
+    `INSERT INTO news (
+      title, slug, category_id, sub_category_id, states,
       short_description, content, tags, youtube_url,
       featured_image, status, is_featured, is_breaking,
       published_at, created_by, updated_by
     )
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       data.title,
       data.slug,
       data.category_id,
       data.sub_category_id,
+      JSON.stringify(data.states ?? []),
       data.short_description,
       data.content,
       data.tags,
@@ -24,10 +24,11 @@ export const createNews = async (data: any) => {
       data.is_featured,
       data.is_breaking,
       data.published_at,
-      data.created_by, // will be the same as updated_by
+      data.created_by,
       data.updated_by,
     ],
   );
+
   return result.insertId;
 };
 
@@ -127,36 +128,38 @@ export const getNewsById = async (id: number) => {
 export const updateNews = async (id: number, data: any) => {
   await db.execute(
     `UPDATE news SET
-      title=?,
-      slug=?,
-      category_id=?,
-      sub_category_id=?,
-      short_description=?,
-      content=?,
-      tags=?,
-      youtube_url=?,
-      featured_image=?,
-      status=?,
-      is_featured=?,
-      is_breaking=?,
-      published_at=?,
-      updated_by=?    -- <-- new field
-    WHERE id=?`,
+      title = ?,
+      slug = ?,
+      category_id = ?,
+      sub_category_id = ?,
+      states = ?,
+      short_description = ?,
+      content = ?,
+      tags = ?,
+      youtube_url = ?,
+      featured_image = ?,
+      status = ?,
+      is_featured = ?,
+      is_breaking = ?,
+      published_at = ?,
+      updated_by = ?
+    WHERE id = ?`,
     [
       data.title,
       data.slug,
       data.category_id,
       data.sub_category_id,
+      JSON.stringify(data.states ?? []), // Added missing value
       data.short_description,
       data.content,
-      data.tags,
-      data.youtube_url,
+      data.tags || null,
+      data.youtube_url || null,
       data.featured_image,
       data.status,
       data.is_featured,
       data.is_breaking,
-      data.published_at,
-      data.updated_by, // <-- pass userId
+      data.published_at || null,
+      data.updated_by,
       id,
     ],
   );

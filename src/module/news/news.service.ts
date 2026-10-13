@@ -4,19 +4,21 @@ import path from "path";
 
 import * as repository from "./news.repository";
 import pool from "../../config/db";
-
+type NewsState = "AP" | "Telangana";
 export const create = async (
   body: any,
   file?: Express.Multer.File,
   userId?: number,
 ) => {
-  const slug = await generateUniqueSlug(body.title);
+  const slug = await generateUniqueSlug(body.slug?.trim() || body.title);
+  const states = parseStates(body.states);
 
   const id = await repository.createNews({
     title: body.title,
     slug,
     category_id: body.category_id,
     sub_category_id: body.sub_category_id,
+    states,
     short_description: body.short_description,
     content: body.content,
     tags: body.tags,
@@ -67,12 +69,14 @@ export const update = async (
 
     featuredImage = `/uploads/news/${file.filename}`;
   }
-
+  const states = parseStates(body.states);
   await repository.updateNews(id, {
+    // Keep all your existing properties.
     title: body.title,
-    slug,
+    slug: await generateUniqueSlug(body.slug?.trim() || body.title),
     category_id: body.category_id,
     sub_category_id: body.sub_category_id,
+    states,
     short_description: body.short_description,
     content: body.content,
     tags: body.tags || null,
@@ -340,4 +344,23 @@ export const getNewsDetails = async (slug: string) => {
     },
     advertisements: ads,
   };
+};
+const parseStates = (value: unknown): NewsState[] => {
+  let parsed: unknown = value;
+
+  if (typeof value === "string") {
+    try {
+      parsed = JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(parsed)) {
+    return [];
+  }
+
+  return [...new Set(parsed)].filter(
+    (state): state is NewsState => state === "AP" || state === "Telangana",
+  );
 };
